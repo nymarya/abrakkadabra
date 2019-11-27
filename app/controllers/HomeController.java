@@ -33,15 +33,15 @@ public class HomeController extends Controller {
                 ask(helloActor, "Hi "+name, 2000))
                 .thenApply(response -> ok(views.html.actor.render(response.toString())));
     }
-/**
-    final ActorRef sparkActor = actorSystem.actorOf(SparkActor.props());
+
+    final ActorRef sparkActor = actorSystem.actorOf(ConvolutionActor.props());
     public CompletionStage<Result> sparkHello() {
         return FutureConverters.toJava(
-                ask(sparkActor, "Hi ", 2000))
+                ask(sparkActor, "Hi ", 30000))
                 .thenApply(response -> ok(views.html.actor.render(response.toString())));
     }
 
-
+/**
     // Uncomment the code below for running without Cassandra (*AND UNCOMMENT THE RESPECTIVE ROUTE)
     final ActorRef dbActor = actorSystem.actorOf(DbActor.props());
     public CompletionStage<Result> requestUser(String name) {

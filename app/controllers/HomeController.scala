@@ -10,6 +10,10 @@ import akka.util.Timeout
 import actors.{ConvolutionActor, HelloActor}
 import actors.HelloActor._
 import actors.ConvolutionActor._
+import messages.KernelData
+import play.api.data._
+import play.api.data.Forms._
+import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -19,7 +23,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 @Singleton
 class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (implicit assetsFinder: AssetsFinder)
-  extends AbstractController(cc) {
+  extends AbstractController(cc) with play.api.i18n.I18nSupport {
+
 
   /**
    * Create an Action to render an HTML page with a welcome message.
@@ -31,6 +36,21 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
     Ok(views.html.index("Your new application is ready."))
   }
 
+  import play.api.data.Form
+  import play.api.data.Forms._
+  val kernelForm: Form[KernelData] = Form(
+    // Defines a mapping that will handle Contact values
+    mapping(
+      "kernel" -> text
+    )(KernelData.apply)(KernelData.unapply)
+  )
+
+  def principal = Action { implicit request =>
+
+    val filledKernel = KernelData(kernel = "[ [-1 , -1 , -1], [-1, 8, -1], [-1, -1 , -1]")
+    Ok(views.html.actor(kernelForm.fill(filledKernel)))
+  }
+
   val helloActor = system.actorOf(HelloActor.props, "hello-actor")
 
   implicit val timeout: Timeout = 30.seconds
@@ -39,6 +59,18 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
     (helloActor ? SayHello(name)).mapTo[String].map { message =>
       Ok(message)
     }
+  }
+
+  def receive = Action { implicit request =>
+    kernelForm.bindFromRequest.fold(
+      formWithErrors => {
+        BadRequest(views.html.actor(formWithErrors))
+      },
+      contact => {
+//        val contactId = Contact.save(contact)
+        Redirect("/")
+      }
+    )
   }
 
   val sparkActor = system.actorOf(ConvolutionActor.props, "spark-actor")

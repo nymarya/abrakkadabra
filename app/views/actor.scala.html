@@ -1,5 +1,11 @@
-@(msg: String)
+@import messages.KernelData
 
-@main("Page Title") {
-  <h1>@msg</h1>
+@(kernelForm: Form[KernelData])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@form(action = routes.HomeController.receive()) {
+  @CSRF.formField                     @* <- takes a RequestHeader    *@
+  @inputText(kernelForm("kernel"), 'style->"width:70%") @* <- takes a MessagesProvider *@
 }
+

@@ -19,4 +19,7 @@ GET     /hello/:name                controllers.HomeController.sayHello(name )
 # Spark test
 GET	/spark		      controllers.HomeController.sparkHello
 
+GET /principal        controllers.HomeController.principal
+POST /principal        controllers.HomeController.receive
+
       

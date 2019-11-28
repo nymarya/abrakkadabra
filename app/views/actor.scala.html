@@ -7,5 +7,7 @@
 @form(action = routes.HomeController.receive()) {
   @CSRF.formField                     @* <- takes a RequestHeader    *@
   @inputText(kernelForm("kernel"), 'style->"width:70%") @* <- takes a MessagesProvider *@
+
+  <button>Submit</button>
 }
 

@@ -27,17 +27,30 @@ class ConvolutionActor extends Actor {
     case convolute(kernel: String) =>
       val image: DenseMatrix[Int] = DenseMatrix( Array(8, 5, 8, 1, 6, 8, 7), Array(9, 9, 2, 8, 2, 7, 8),
         Array(2, 9, 4, 9, 7, 3, 2), Array(6, 9, 8, 7, 3, 1, 5), Array(3, 5, 6, 4, 1, 4, 7))
-      val kernel :DenseMatrix[Int] = DenseMatrix(Array(3, 2, 2), Array(1, 1, 3), Array(3, 1, 2))
+      val kernel : DenseMatrix[Int] = DenseMatrix(Array(3, 2, 2), Array(1, 1, 3), Array(3, 1, 2))
       val m : Int = image.rows + kernel.rows - 1;
+
+      val imageCopy: DenseMatrix[Int] = DenseMatrix.zeros(m, m)
+      val kernelCopy: DenseMatrix[Int] = DenseMatrix.zeros(m, m)
+
+      // Fill
+      for( i <- 0 until image.rows; j <- 0 until image.cols){
+        imageCopy(i, j) = image.apply(i, j)
+      }
+
+      for( i <- 0 until kernel.rows; j <- 0 until kernel.cols){
+        kernelCopy(i, j) = kernel.apply(i, j)
+      }
+
       val result : DenseMatrix[Int] = DenseMatrix.zeros(m, m)
       for (j <- 0 until m){
         for (k <- 0 until m){
           var sum: Int = 0;
           for (p <-0 to j){
             for (q <- 0 to k ){
-              val k = kernel.apply(p, q)
+              val k = kernelCopy.apply(p, q)
               println(j - p )
-              val i = image.apply(j - p, k - q)
+              val i = imageCopy.apply(j - p, k - q)
               sum = sum + k * i
             }
           }

@@ -19,7 +19,7 @@ object ConvolutionActor {
 
 class ConvolutionActor extends Actor {
 
-  val conf = new SparkContext("spark://104.198.164.25:7077", "abrakkadabra")
+//  val conf = new SparkContext("spark://104.198.164.25:7077", "abrakkadabra")
 
   import ConvolutionActor.convolute
 

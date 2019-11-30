@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-slf4j"  % akkaVersion,
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
 
-  "org.scalanlp" %% "breeze" % "0.12",
+  "org.scalanlp" %% "breeze" % "0.12"
 )
 
 //libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "3.6.0"

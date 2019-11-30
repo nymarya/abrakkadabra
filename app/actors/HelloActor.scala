@@ -13,6 +13,8 @@ class HelloActor extends Actor {
 
   def receive = {
     case SayHello(name: String) =>
+      println("hello")
       sender() ! "Hello, " + name
+    case kernel: String => "Hello, " + kernel
   }
 }

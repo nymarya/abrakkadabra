@@ -7,9 +7,10 @@ import play.api.mvc._
 import scala.concurrent.duration._
 import akka.pattern.ask
 import akka.util.Timeout
-import actors.{ConvolutionActor, HelloActor}
+import actors.{ConvolutionActor, HelloActor, MasterActor}
 import actors.HelloActor._
 import actors.ConvolutionActor._
+import akka.event.{LogSource, Logging}
 import messages.KernelData
 import play.api.data._
 import play.api.data.Forms._
@@ -47,7 +48,7 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
 
   def principal = Action { implicit request =>
 
-    val filledKernel = KernelData(kernel = "[ [-1 , -1 , -1], [-1, 8, -1], [-1, -1 , -1]")
+    val filledKernel = KernelData(kernel = "[ [-1 , -1 , -1], [-1, 8, -1], [-1, -1 , -1]]")
     Ok(views.html.actor(kernelForm.fill(filledKernel)))
   }
 
@@ -55,20 +56,33 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
 
   implicit val timeout: Timeout = 30.seconds
   def sayHello(name: String) = Action.async {
-
     (helloActor ? SayHello(name)).mapTo[String].map { message =>
       Ok(message)
     }
   }
-
+  implicit val logSource: LogSource[AnyRef] = new LogSource[AnyRef] {
+    def genString(o: AnyRef): String = o.getClass().getName
+    override def getClazz(o: AnyRef): Class[_] = o.getClass()
+  }
+  val log = Logging(system, this)
+  val masterActor = system.actorOf(MasterActor.props, "master-actor")
   def receive = Action { implicit request =>
+
     kernelForm.bindFromRequest.fold(
       formWithErrors => {
+        println("bbb")
         BadRequest(views.html.actor(formWithErrors))
       },
-      contact => {
+      kernel => {
+        (masterActor ? kernel).mapTo[String].map { message =>
+          println("aaaa")
+          log.debug(message)
+          Redirect("/principal")
+          Ok(views.html.index(message))
+        }
+        println("cc")
 //        val contactId = Contact.save(contact)
-        Redirect("/")
+        Redirect("/principal")
       }
     )
   }

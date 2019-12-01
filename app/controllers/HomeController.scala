@@ -54,7 +54,7 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
 
   val helloActor = system.actorOf(HelloActor.props, "hello-actor")
 
-  implicit val timeout: Timeout = 30.seconds
+  implicit val timeout: Timeout = 60.seconds
   def sayHello(name: String) = Action.async {
     (helloActor ? SayHello(name)).mapTo[String].map { message =>
       Ok(message)
@@ -90,7 +90,7 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
   val sparkActor = system.actorOf(ConvolutionActor.props, "spark-actor")
   def sparkHello() = Action.async {
 
-    (sparkActor ? convolute("aa")).mapTo[String].map { message =>
+    (sparkActor ? "aa").mapTo[String].map { message =>
       Ok(message)
     }
   }

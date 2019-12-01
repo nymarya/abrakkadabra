@@ -2,112 +2,106 @@ package actors
 
 import akka.actor.{AbstractActor, Actor, Props}
 import akka.actor.typed.Signal
-import org.apache.spark.SparkContext
+import org.apache.spark.{Accumulator, SparkContext}
 import org.apache.spark.SparkContext._
+import org.apache.spark.util.{AccumulatorV2, DoubleAccumulator}
 //import java.util._
 //import org.apache.spark.api.java.JavaSparkContext
 //import org.apache.spark.SparkConf
 //import org.apache.spark.api.java.JavaRDD
 import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.signal._
 
 object ConvolutionActor {
   def props = Props[ConvolutionActor]
-
-  case class convolute(kernel: String);
 
 }
 
 class ConvolutionActor extends Actor {
 
-//  val conf = new SparkContext("spark://104.198.164.25:7077", "abrakkadabra")
+//  val sc = new SparkContext("spark://35.222.166.14:7077", "abrakkadabra")
 
-  import ConvolutionActor.convolute
+  def func(x: Int, ac: DoubleAccumulator) = {
+      ac.add(x)
+  }
 
   def receive = {
-    case convolute(kernel: String) =>
+    case kernel: String =>
+//      val image: DenseVector[Int] = DenseVector( 8, 5, 8, 1, 6, 8, 7, 9, 9, 2, 8, 2, 7, 8,
+//        2, 9, 4, 9, 7, 3, 2, 9, 2, 9, 7, 1, 9, 5, 6, 9, 8, 7, 3, 1, 5,
+//        3, 5, 6, 4, 1, 4, 7)
+//      val kernel : DenseVector[Int] = DenseVector(3, 2, 2, 1, 1, 3, 3, 1, 2)
+
+
       val image: DenseMatrix[Int] = DenseMatrix( Array(8, 5, 8, 1, 6, 8, 7), Array(9, 9, 2, 8, 2, 7, 8),
-        Array(2, 9, 4, 9, 7, 3, 2), Array(6, 9, 8, 7, 3, 1, 5), Array(3, 5, 6, 4, 1, 4, 7))
+        Array(2, 9, 4, 9, 7, 3, 2), Array( 9, 2, 9, 7, 1, 9, 5), Array(6, 9, 8, 7, 3, 1, 5),
+        Array(1, 9, 9, 7, 1, 4, 6), Array(3, 5, 6, 4, 1, 4, 7))
       val kernel : DenseMatrix[Int] = DenseMatrix(Array(3, 2, 2), Array(1, 1, 3), Array(3, 1, 2))
-      val m : Int = image.rows + kernel.rows - 1;
+
+      val m : Int = image.rows + kernel.rows - 1
+
+//      val imageaa = sc.parallelize(image.toArray)
 
       val imageCopy: DenseMatrix[Int] = DenseMatrix.zeros(m, m)
       val kernelCopy: DenseMatrix[Int] = DenseMatrix.zeros(m, m)
 
       // Fill
-      for( i <- 0 until image.rows; j <- 0 until image.cols){
+      for( i <- 0 until image.rows; j <- 0 until image.rows){
         imageCopy(i, j) = image.apply(i, j)
       }
 
-      for( i <- 0 until kernel.rows; j <- 0 until kernel.cols){
+      for( i <- 0 until kernel.rows; j <- 0 until kernel.rows){
         kernelCopy(i, j) = kernel.apply(i, j)
       }
 
-      val result : DenseMatrix[Int] = DenseMatrix.zeros(m, m)
-      for (j <- 0 until m){
-        for (k <- 0 until m){
-          var sum: Int = 0;
-          for (p <-0 to j){
-            for (q <- 0 to k ){
-              val k = kernelCopy.apply(p, q)
-              println(j - p )
-              val i = imageCopy.apply(j - p, k - q)
-              sum = sum + k * i
-            }
-          }
-          result(j, k) = sum
-        }
-      }
-    sender() ! ", I'm an actor using Spark! The first element of the RDD is "
-     //+ String.valueOf(kernel)
+//      val sum = sc.doubleAccumulator("acc")
+      val result : DenseMatrix[Double] = DenseMatrix.zeros(m, m)
+      val rangeJ = 0 until m
+//      val result = sc.parallelize(0 until m).map(
+//        j => {
+//        for( k <- 0 until m) {
+//            var sum = 0
+//            for( p <- 0 to j) {
+//
+//                for(q <- 0 to k){
+//                  val ker = kernelCopy.apply(p, q)
+//                  val im = imageCopy.apply(j - p, k - q)
+//                  sum += (ker * im)
+//                }
+//              }
+//
+//             sum
+//          }
+//        }).collect()
+
+
+//      val image_height = image.rows
+//      val image_width = image.cols
+//      val local_filter_height = kernel.rows
+//      val local_filter_width = kernel.cols
+//      val padded = BDM.zeros[Double](image_height + 2 * (filter_height/2),
+//        image_width + 2* (filter_width/2))
+//      for (i <- 0 until image_height) {
+//        for (j <- 0 until image_width) {
+//          padded(i + (filter_height / 2), j + (filter_height / 2)) = image(i, j)
+//        }
+//      }
+//      val convolved = BDM.zeros[Double](image_height -local_filter_height + 1 + 2 *
+//        (filter_height/2), image_width - local_filter_width + 1 + 2 * (filter_width/2))
+//      for (i <- 0 until convolved.rows) {
+//        for (j <- 0 until convolved.cols) {
+//          var aggregate = 0.0
+//          for (k <- 0 until local_filter_height) {
+//            for (l <- 0 until local_filter_width) {
+//              aggregate += padded(i + k, j + l) * filter(k, l)
+//            }
+//          }
+//          convolved(i, j) = aggregate
+//        }
+//      }
+//
+//      val result = convolve(image, kernel)
+    sender() ! "I'm an actor using Spark! The first element of the RDD is \n"+ result.toString()
     //this
   }
 }
-
-//object ConvolutionActor {
-//  def props = Props.create(classOf[ConvolutionActor])
-//}
-//
-//class ConvolutionActor() extends AbstractActor {
-//  val conf = new SparkContext("spark://35.232.205.36:7077",
-//    "abrakkadabra")
-//  //  SparkSession.builder()
-//  //    .appName("SparkSample")
-//  //    .master()
-//  //    .getOrCreate()
-//  //  new SparkConf(true).setAppName //
-//  //  "MyApp".setMaster("spark://35.232.205.36:7077")
-//  //  sc = new JavaSparkContext(conf)
-//  //  sc.close()
-//  //  private var sc = null
-//
-//  override def onSignal: PartialFunction[Signal, Behavior[Nothing]] = {
-//    case PostStop =>
-//      context.log.info("IoT Application stopped")
-//      this
-//  }
-//
-//  @Override override def createReceive = receiveBuilder.`match`(classOf[Nothing], (s: P) => {
-//    def foo(s: P) = { // conv
-//      //                    Matrix image = Matrices.dense(7, 7, new double[] {8, 5, 8, 1, 6, 8, 7, 9, 9, 2, 8, 2, 7, 8,
-//      //                            2, 9, 4, 9, 7, 3, 2, 6, 9, 8, 7, 3, 1, 5, 3, 5, 6, 4, 1, 4, 7});
-//      //                    Matrix kernel = Matrices.dense(3, 3, new double[] {3, 2,2 , 1,1,3, 3,1,2});
-//      //                    long m = image.numRows() + kernel.numRows() - 1;
-//      //                    int[][] result = new int[(int) m][(int) m];
-//      //                    for(int j = 0; j < m; j++){
-//      //                        for(int k = 0; k < m; k++){
-//      //                            int sum = 0;
-//      //                            for(int p = 0; p< j+1; p++){
-//      //                                for (int q = 0; q < k+1; q++){
-//      //                                    sum += kernel.apply(p, q) * image.apply(j-p, k-q);
-//      //                                }
-//      //                            }
-//      //                            result[j][k] = sum;
-//      //                        }
-//      //                    }
-//      sender.tell(s + ", I'm an actor using Spark! The first element of the RDD is ", //+ String.valueOf(kernel)
-//        self)
-//    }
-//
-//    foo(s)
-//  }).build
-//}

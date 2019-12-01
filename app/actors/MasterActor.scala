@@ -1,7 +1,7 @@
 package actors
 
 import actors.HelloActor.SayHello
-import akka.actor.{Actor, Props}
+import akka.actor.{Actor, ActorRef, Props}
 import messages.KernelData
 import org.apache.spark.SparkContext
 
@@ -13,14 +13,14 @@ object MasterActor {
 }
 
 class MasterActor extends Actor {
-  val sparkActor = context.actorOf(HelloActor.props, "spark0-actor")
-  val cassandraActor = context.actorOf(HelloActor.props, "spark1-actor")
-  val kafkaActor = context.actorOf(HelloActor.props, "spark2-actor")
+//  val sparkActor = context.actorOf(HelloActor.props, "spark0-actor")
+//  val cassandraActor = context.actorOf(HelloActor.props, "spark1-actor")
+  val kafkaActor: ActorRef = context.actorOf(ProducerActor.props, "producer-actor")
 
   def receive = {
     case kernelData: KernelData => {
       println(kernelData.kernel)
-      sender() ! kafkaActor.tell(kernelData.kernel, sender())
+      sender() ! kafkaActor.tell(kernelData, sender())
 //      kafkaActor.tell(kernelData.kernel, sender())
     }
 //    case KernelData =>

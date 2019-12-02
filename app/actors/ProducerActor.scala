@@ -10,7 +10,7 @@ import scala.concurrent.Future
 import akka.Done
 import akka.actor.{Actor, Props}
 import akka.stream.ActorMaterializer
-import messages.KernelData
+import messages.{KernelData, Producted}
 
 object ProducerActor{
   def props = Props[ProducerActor]
@@ -34,6 +34,8 @@ class ProducerActor extends Actor{
         .runWith(Producer.plainSink(producerSettings, kafkaProducer))
 
       println(done)
+      val p = Producted
+      sender() ! p
 
     }
   }

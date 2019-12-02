@@ -64,7 +64,6 @@ class ConvolutionActor extends Actor {
 //        }
 //      }
 
-      val result = convolve(image, kernel)
     val entries: RDD[MatrixEntry] =  sc.parallelize(matrices.kernel.zipWithIndex.map{ case (v, i) =>
                                                           v.zipWithIndex.map{ case (x, j) =>  MatrixEntry(i, j , x)}}
       .flatMap(_.toSeq))

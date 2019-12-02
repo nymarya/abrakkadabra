@@ -9,6 +9,8 @@ import com.datastax.driver.core.{Cluster, SimpleStatement}
 import scala.concurrent.{Await, TimeoutException}
 import scala.concurrent.duration._
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 object DatabaseActor{
   def props = Props[DatabaseActor]
 }

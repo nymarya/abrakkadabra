@@ -14,6 +14,11 @@ scalaVersion := "2.11.12"
 
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.6.7"
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7.1"
+dependencyOverrides +=  "io.netty" %  "netty-handler" % "4.1.13.Final"
+dependencyOverrides +=  "io.netty" %  "netty-common" % "4.1.31.Final"
+dependencyOverrides +=  "io.netty" %  "netty-resolver" % "4.1.31.Final"
+dependencyOverrides +=  "io.netty" %  "netty-transport" % "4.1.31.Final"
+dependencyOverrides +=  "io.netty" %  "netty-buffer" % "4.1.31.Final"
 //dependencyOverrides +=
 
 libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
@@ -37,11 +42,13 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze" % "0.12"
 )
 
-libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "4.0.0"
-libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-mapping" % "3.8.0"
+libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "3.6.0"
+libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-mapping" % "3.6.0"
 libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.4"
 //// https://mvnrepository.com/artifact/org.apache.spark/spark-mllib
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.4"
+
+enablePlugins(JavaAppPackaging)
 // https://mvnrepository.com/artifact/io.netty/netty-all
 //libraryDependencies += "io.netty" %  "netty-all" % "4.1.17.Final"
 

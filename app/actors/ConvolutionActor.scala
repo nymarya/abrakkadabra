@@ -31,6 +31,7 @@ class ConvolutionActor extends Actor {
 
   def receive = {
     case matrices: Matrices =>
+      println("spark")
 
 //      val image: DenseMatrix[Int] = DenseMatrix( matrices.matrix : _)
 //      val kernel : DenseMatrix[Int] = DenseMatrix(matrices.kernel : _)

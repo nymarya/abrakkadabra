@@ -83,7 +83,7 @@ class ConsumerActor extends Actor{
       Consumer
         .committableSource(consumerSettings, Subscriptions.topics("topico-replicado"))
         .mapAsync(1) { msg =>
-          handleMessage(msg.record.value.toString())
+          handleMessage( (msg.record.value.map(_.toChar)).mkString)
             .flatMap(response => msg.committableOffset.commitScaladsl())
             .recoverWith { case e => msg.committableOffset.commitScaladsl() }
         }

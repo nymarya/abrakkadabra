@@ -3,16 +3,16 @@ package actors
 import akka.Done
 import akka.kafka.{CommitterSettings, ConsumerSettings, Subscriptions}
 import akka.kafka.scaladsl.{Committer, Consumer}
-import akka.stream.scaladsl.{Keep, Sink}
+import akka.stream.scaladsl.{Flow, GraphDSL, Keep, RunnableGraph, Sink}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 
 import scala.concurrent.Future
 import akka.actor.{Actor, Props}
 import akka.kafka.scaladsl.Consumer.DrainingControl
-import akka.stream.ActorMaterializer
+import akka.stream.{ActorMaterializer, ClosedShape}
 import com.typesafe.config.Config
 import messages.Kernel
-import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
 import org.apache.kafka.common.TopicPartition
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -56,12 +56,24 @@ class ConsumerActor extends Actor{
 //          .toMat(Sink.seq)(Keep.both)
 //          .mapMaterializedValue(DrainingControl.apply)
 //          .run()
+      val kafkaTopic = "topico-replicado"
+      val partition = 0
+      val subscription = Subscriptions.assignment(new TopicPartition(kafkaTopic, partition))
+      val runnableGraph = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder =>
+        import akka.stream.scaladsl.GraphDSL.Implicits._
 
-      val S = Consumer.plainSource(consumerSettings, Subscriptions.topics(topic)).mapAsync( 1){
-        msg => business( msg.value)
-      }
+        val kafkaSource = Consumer.plainSource(consumerSettings, subscription)
+        val printlnSink = Sink.foreach(println)
+        val mapFromConsumerRecord = Flow[ConsumerRecord[Array[Byte], String]].map(record => record.value())
 
-      println(S)
+        kafkaSource ~> mapFromConsumerRecord ~> printlnSink
+
+        ClosedShape
+      })
+
+      runnableGraph.run()
+
+//      println(S)
 
     }
     case x: Any => println(x)

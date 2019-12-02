@@ -32,7 +32,7 @@ class ConsumerActor extends Actor{
       .withProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false")
       .withProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1")
   val kafkaConsumer = consumerSettings.createKafkaConsumer()
-  kafkaConsumer.subscribe("topico-relacionado")
+//  kafkaConsumer.subscri:be("topico-relacionado")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   def business( value: Array[Byte]): Future[Done] = {// ???

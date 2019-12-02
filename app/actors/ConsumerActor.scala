@@ -13,8 +13,7 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import messages.Kernel
 import org.apache.kafka.clients.consumer.ConsumerConfig
-
-import scala.collection.immutable
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object ConsumerActor{
   def props = Props[ConsumerActor]

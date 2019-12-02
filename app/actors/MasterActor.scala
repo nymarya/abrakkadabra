@@ -13,7 +13,7 @@ object MasterActor {
 }
 
 class MasterActor extends Actor {
-//  val sparkActor = context.actorOf(HelloActor.props, "spark0-actor")
+  val sparkActor = context.actorOf(ConvolutionActor.props, "spark0-actor")
   val cassandraActor = context.actorOf(DatabaseActor.props, "cassandra-actor")
   val kafkaActor: ActorRef = context.actorOf(ProducerActor.props, "producer-actor")
   val kafkaActor2: ActorRef = context.actorOf(ConsumerActor.props, "consumer-actor")

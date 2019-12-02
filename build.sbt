@@ -41,7 +41,7 @@ libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "3.6
 libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-mapping" % "3.6.0"
 libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.4"
 //// https://mvnrepository.com/artifact/org.apache.spark/spark-mllib
-//libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.4"
+libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.4"
 // https://mvnrepository.com/artifact/io.netty/netty-all
 //libraryDependencies += "io.netty" %  "netty-all" % "4.1.17.Final"
 

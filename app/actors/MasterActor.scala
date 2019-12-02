@@ -20,6 +20,7 @@ class MasterActor extends Actor {
   val kafkaActor2: ActorRef = context.actorOf(ConsumerActor.props, "consumer-actor")
 
   def receive = {
+
     case kernelData: KernelData => {
       println(kernelData.kernel)
       kafkaActor ! kernelData
@@ -41,7 +42,10 @@ class MasterActor extends Actor {
 
     }
     case m: Matrices => sparkActor ! m
-    case b: BlockMatrix => println(b.toCoordinateMatrix().entries.toJavaRDD().toString()); sender().forward(b.toCoordinateMatrix().entries.toJavaRDD().toString())
+    case b: BlockMatrix => {
+      println(b.toCoordinateMatrix().entries.toJavaRDD().toDebugString())
+      sender().forward(b.toCoordinateMatrix().entries.toJavaRDD().toString())
+    }
     case x: Any => println("Tipo inesperado"); println(x)
   }
 

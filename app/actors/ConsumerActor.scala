@@ -3,7 +3,7 @@ package actors
 import akka.Done
 import akka.kafka.{CommitterSettings, ConsumerSettings, Subscriptions}
 import akka.kafka.scaladsl.{Committer, Consumer}
-import akka.stream.scaladsl.{Flow, GraphDSL, Keep, RunnableGraph, Sink}
+import akka.stream.scaladsl.{Flow, GraphDSL, Keep, RunnableGraph, Sink, Source}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 
 import scala.concurrent.Future
@@ -63,10 +63,11 @@ class ConsumerActor extends Actor{
         import akka.stream.scaladsl.GraphDSL.Implicits._
 
         val kafkaSource = Consumer.plainSource(consumerSettings, subscription)
-        val printlnSink = Sink.foreach(a => { println(a)})
-        val mapFromConsumerRecord = Flow[ConsumerRecord[Array[Byte], String]].map(record => record.value()).map(this::toJson)
+        val printlnSink = Sink.foreach(println)
+        val anoSink = Sink.foreach(_.toList)
+        val mapFromConsumerRecord = Flow[ConsumerRecord[Array[Byte], String]].map(record => record.value())
 
-        kafkaSource ~> mapFromConsumerRecord ~> printlnSink
+        kafkaSource ~> mapFromConsumerRecord ~> printlnSink ~> anoSink
 
         ClosedShape
       })

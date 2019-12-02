@@ -47,8 +47,9 @@ class DatabaseActor extends Actor{
         println(item.head.getString(1))
         val matrix :String = item.head.getString(1)
         val matrixNew: Array[Array[Int]] = matrix.slice(1, matrix.length-1).split(']')
-          .map(a => a.slice(2, a.length- 1).split(',').map(b => b.replaceAllLiterally(" ", "").toInt).toArray ).toArray
-
+          .map(a => a.replaceAllLiterally("[", "").replaceAllLiterally("]", "").split(',')
+            .map( b => b.replaceAllLiterally(" ", "").mkString).filterNot(x => x == "").map(y =>y.toInt)
+          ).toArray
         val m: Matrices = Matrices(strings, matrixNew )
 
         sender() ! m

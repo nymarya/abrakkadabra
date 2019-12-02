@@ -63,8 +63,8 @@ class ConsumerActor extends Actor{
         import akka.stream.scaladsl.GraphDSL.Implicits._
 
         val kafkaSource = Consumer.plainSource(consumerSettings, subscription)
-        val printlnSink = Sink.foreach(println)
-        val mapFromConsumerRecord = Flow[ConsumerRecord[Array[Byte], String]].map(record => record.value())
+        val printlnSink = Sink.foreach(a => { println(a)})
+        val mapFromConsumerRecord = Flow[ConsumerRecord[Array[Byte], String]].map(record => record.value()).map(this::toJson)
 
         kafkaSource ~> mapFromConsumerRecord ~> printlnSink
 

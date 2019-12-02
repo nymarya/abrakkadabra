@@ -6,7 +6,7 @@ import akka.kafka.scaladsl.{Committer, Consumer}
 import akka.stream.scaladsl.{Flow, GraphDSL, Keep, RunnableGraph, Sink, Source}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Future, TimeoutException}
 import akka.actor.{Actor, Props}
 import akka.kafka.scaladsl.Consumer.DrainingControl
 import akka.stream.{ActorMaterializer, ClosedShape}
@@ -95,7 +95,11 @@ class ConsumerActor extends Actor{
 
 //      println(S)
       val d : Duration = 2.seconds
-      Await.ready(c, d)
+      try{
+        Await.ready(c, d)
+      } catch{
+        case x : TimeoutException => println("timeout")
+      }
 
       sender() ! ker
     }

@@ -26,6 +26,7 @@ class DatabaseActor extends Actor{
   def receive = {
     case rows: Int => {
       println("cass")
+      println(rows)
       val keyspaceName = "abrakkadabra"
       val stmt = new SimpleStatement(s"SELECT * FROM $keyspaceName.matrixes WHERE rows=$rows limit 1 ALLOW FILTERING")
       val results = CassandraSource(stmt).runWith(Sink.seq)
@@ -37,7 +38,7 @@ class DatabaseActor extends Actor{
         case x : TimeoutException => println("timeout")
       }
 
-      println(results)
+      println(results.value)
     }
   }
 

@@ -29,7 +29,9 @@ class MasterActor extends Actor {
       kafkaActor2 ! top
     }
     case k: Kernel => {
-      val strings: Array[Array[String]] = k.value.split(',').map(a => a.split(','))
+      val strings: Array[Array[String]] = k.value.slice(1, k.value.length-1).split(']')
+                                            .map(a => a.split(','))
+      println(strings)
 
       cassandraActor ! strings(0).length
 

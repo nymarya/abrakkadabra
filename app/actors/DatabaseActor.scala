@@ -6,6 +6,9 @@ import akka.stream.alpakka.cassandra.scaladsl.CassandraSource
 import akka.stream.scaladsl.Sink
 import com.datastax.driver.core.{Cluster, SimpleStatement}
 
+import scala.concurrent.{Await, TimeoutException}
+import scala.concurrent.duration._
+
 object DatabaseActor{
   def props = Props[DatabaseActor]
 }
@@ -13,7 +16,7 @@ object DatabaseActor{
 class DatabaseActor extends Actor{
 
   implicit val session = Cluster.builder
-    .addContactPoint("10.128.0.2")
+    .addContactPoint("10.128.0.4")
     .withPort(9042)
     .build
     .connect()
@@ -26,6 +29,14 @@ class DatabaseActor extends Actor{
       val keyspaceName = "abrakkadabra"
       val stmt = new SimpleStatement(s"SELECT * FROM $keyspaceName.matrixes WHERE row=$rows").setFetchSize(1)
       val results = CassandraSource(stmt).runWith(Sink.seq)
+
+      val d : Duration = 1.seconds
+      try{
+        Await.ready(results, d)
+      } catch{
+        case x : TimeoutException => println("timeout")
+      }
+
       println(results)
     }
   }

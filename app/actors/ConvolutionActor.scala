@@ -104,13 +104,15 @@ class ConvolutionActor extends Actor {
 //      }
 //
 //      val result = convolve(image, kernel)
-    val entries: RDD[MatrixEntry] =  sc.parallelize(matrices.kernel.toSeq)
+    val entries: RDD[MatrixEntry] =  sc.parallelize(matrices.kernel.zipWithIndex.map( (v, i) =>
+                                                          v._1.zipWithIndex.map((x, j) =>  MatrixEntry(i, j , x._1))))
     // Create a CoordinateMatrix from an RDD[MatrixEntry].
     val coordMat: CoordinateMatrix = new CoordinateMatrix(entries)
     // Transform the CoordinateMatrix to a BlockMatrix
     val matA: BlockMatrix = coordMat.toBlockMatrix().cache()
 
-    val entries1: RDD[MatrixEntry] =  sc.parallelize(matrices.matrix.toSeq)
+    val entries1: RDD[MatrixEntry] =  sc.parallelize(matrices.matrix.zipWithIndex.map( (v, i) =>
+      v._1.zipWithIndex.map((x, j) =>  MatrixEntry(i, j , x._1))))
     // Create a CoordinateMatrix from an RDD[MatrixEntry].
     val coordMat1: CoordinateMatrix = new CoordinateMatrix(entries1)
     // Transform the CoordinateMatrix to a BlockMatrix

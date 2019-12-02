@@ -56,9 +56,7 @@ class ConsumerActor extends Actor{
 //          .mapMaterializedValue(DrainingControl.apply)
 //          .run()
 
-      val S = Consumer.plainSource(consumerSettings, Subscriptions.assignmentWithOffset(
-        new TopicPartition(topic,0) -> 0
-      )).mapAsync( 1){
+      val S = Consumer.plainSource(consumerSettings, Subscriptions.topics(topic)).mapAsync( 1){
         msg => business( msg.value)
       }.toMat(Sink.seq)(Keep.both)
         .mapMaterializedValue(DrainingControl.apply)

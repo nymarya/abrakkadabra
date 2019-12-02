@@ -59,7 +59,6 @@ class ConsumerActor extends Actor{
   def receive = {
     case topic:  String => {
       println("cons")
-      println(topic)
 //      val control: DrainingControl[immutable.Seq[Done]] =
 //        Consumer
 //          .at(consumerSettings, Subscriptions.topics(topic))

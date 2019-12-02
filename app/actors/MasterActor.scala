@@ -36,7 +36,6 @@ class MasterActor extends Actor {
         .map(a => a.replaceAllLiterally("[", "").replaceAllLiterally("]", "").split(',')
           .map( b => b.replaceAllLiterally(" ", "").mkString).filterNot(x => x == "").map(y =>y.toInt)
         ).toArray
-      println(strings.toString())
 
       cassandraActor ! strings
 

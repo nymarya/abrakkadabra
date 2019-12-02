@@ -81,7 +81,6 @@ class ConvolutionActor extends Actor {
     val matB: BlockMatrix = coordMat1.toBlockMatrix().cache()
 
     val result = matA.multiply(matB)
-    println(result)
     sender() ! result
     //this
   }

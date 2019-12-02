@@ -74,12 +74,10 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
       },
       kernel => {
         (masterActor ? kernel).mapTo[String].map { message =>
-          println("aaaa")
           log.debug(message)
           Redirect("/principal")
           Ok(views.html.index(message))
         }
-        println("cc")
 //        val contactId = Contact.save(contact)
         Redirect("/principal")
       }

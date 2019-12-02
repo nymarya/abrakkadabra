@@ -26,14 +26,13 @@ class ProducerActor extends Actor{
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   def receive = {
     case kernel:  KernelData => {
-      println("prod")
+      println("producer")
 
       val done = Source(1 to 1)
         .map(_.toString)
         .map(value => new ProducerRecord[String, String]("topico-replicado",kernel.kernel))
         .runWith(Producer.plainSink(producerSettings, kafkaProducer))
 
-      println(done)
       val p = Producted
       sender() ! p
 

@@ -21,10 +21,10 @@ class MasterActor extends Actor {
   def receive = {
     case kernelData: KernelData => {
       println(kernelData.kernel)
-      sender() ! kafkaActor.tell(kernelData, sender())
+      kafkaActor.tell(kernelData, sender())
 //      kafkaActor.tell(kernelData.kernel, sender())
     }
-    case Producted => sender() ! kafkaActor2.tell("topico-relacionado", sender())
+    case Producted => kafkaActor2.tell("topico-relacionado", sender())
     case Kernel => println("recebeu resposta do consumidor")
   }
 

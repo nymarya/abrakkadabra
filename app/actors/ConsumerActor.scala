@@ -42,6 +42,7 @@ class ConsumerActor extends Actor{
 
   def receive = {
     case topic:  String => {
+      println("cons")
       val control: DrainingControl[immutable.Seq[Done]] =
         Consumer
           .atMostOnceSource(consumerSettings, Subscriptions.topics(topic))

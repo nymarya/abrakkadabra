@@ -43,6 +43,7 @@ class DatabaseActor extends Actor{
       var m: Matrices = Matrices(strings, strings )
       results.foreach( item => {
         val matrix :String = item.head.getString(1)
+        println(matrix)
         val matrixNew: Array[Array[Int]] = matrix.slice(1, matrix.length-1).split(']')
           .map(a => a.replaceAllLiterally("[", "").replaceAllLiterally("]", "").split(',')
             .map( b => b.replaceAllLiterally(" ", "").mkString).filterNot(x => x == "").map(y =>y.toInt)

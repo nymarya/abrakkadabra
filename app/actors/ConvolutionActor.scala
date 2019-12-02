@@ -3,7 +3,7 @@ package actors
 import akka.actor.{AbstractActor, Actor, Props}
 import akka.actor.typed.Signal
 import messages.Matrices
-import org.apache.spark.{Accumulator, SparkContext}
+import org.apache.spark.{Accumulator, SparkConf, SparkContext}
 import org.apache.spark.SparkContext._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.util.{AccumulatorV2, DoubleAccumulator}
@@ -21,9 +21,9 @@ object ConvolutionActor {
 }
 
 class ConvolutionActor extends Actor {
+  val conf = new SparkConf().setAppName("abrakkadabra").setMaster("spark://34.69.245.207:7077").set("spark.driver.allowMultipleContexts", "true")
 
-  val sc = new SparkContext("spark://34.69.245.207:7077", "abrakkadabra")
-
+  val sc = new SparkContext(conf)
   def func(x: Int, ac: DoubleAccumulator) = {
       ac.add(x)
   }

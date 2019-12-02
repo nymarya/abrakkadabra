@@ -43,7 +43,7 @@ class MasterActor extends Actor {
     }
     case m: Matrices => sparkActor ! m
     case b: BlockMatrix => {
-      println(b.toCoordinateMatrix().entries.toJavaRDD().toDebugString())
+      b.toCoordinateMatrix().entries.foreach(println)
       sender().forward(b.toCoordinateMatrix().entries.toJavaRDD().toString())
     }
     case x: Any => println("Tipo inesperado"); println(x)

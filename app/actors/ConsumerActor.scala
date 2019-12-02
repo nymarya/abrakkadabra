@@ -13,6 +13,8 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import messages.Kernel
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.TopicPartition
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ConsumerActor{
@@ -27,9 +29,10 @@ class ConsumerActor extends Actor{
       .withBootstrapServers("10.128.0.2:9092")
       .withGroupId("console-consumer-77977")
       .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
-      .withProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true")
-      .withProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "5000")
+      .withProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false")
+      .withProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1")
   val kafkaConsumer = consumerSettings.createKafkaConsumer()
+  kafkaConsumer.subscribe("topico-relacionado")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   def business( value: Array[Byte]): Future[Done] = {// ???
@@ -53,18 +56,13 @@ class ConsumerActor extends Actor{
 //          .mapMaterializedValue(DrainingControl.apply)
 //          .run()
 
-      val committerSettings = CommitterSettings(context.system)
-
-      val control: DrainingControl[Done] =
-        Consumer
-          .committableSource(consumerSettings, Subscriptions.topics(topic))
-          .mapAsync(1) { msg =>
-            business( msg.record.value)
-              .map(_ => msg.committableOffset)
-          }
-          .toMat(Committer.sink(committerSettings))(Keep.both)
-          .mapMaterializedValue(DrainingControl.apply)
-          .run()
+      val S = Consumer.plainSource(consumerSettings, Subscriptions.assignmentWithOffset(
+        new TopicPartition(topic,0) -> 0
+      )).mapAsync( 1){
+        msg => business( msg.value)
+      }.toMat(Sink.seq)(Keep.both)
+        .mapMaterializedValue(DrainingControl.apply)
+        .run()
 
     }
     case x: Any => println(x)

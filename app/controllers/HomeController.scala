@@ -54,7 +54,7 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
 
   val helloActor = system.actorOf(HelloActor.props, "hello-actor")
 
-  implicit val timeout: Timeout = 60.seconds
+  implicit val timeout: Timeout = 120.seconds
   def sayHello(name: String) = Action.async {
     (helloActor ? SayHello(name)).mapTo[String].map { message =>
       Ok(message)
@@ -70,7 +70,6 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
 
     kernelForm.bindFromRequest.fold(
       formWithErrors => {
-        println("bbb")
         BadRequest(views.html.actor(formWithErrors))
       },
       kernel => {

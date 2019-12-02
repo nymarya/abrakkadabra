@@ -64,7 +64,7 @@ class ConsumerActor extends Actor{
 
         val kafkaSource = Consumer.plainSource(consumerSettings, subscription)
         val printlnSink = Sink.foreach(println)
-        val anoSink = Sink.foreach(_.toList)
+        val anoSink = Sink.foreach((a : Source[String, String]) => {println(a.toString())})
         val mapFromConsumerRecord = Flow[ConsumerRecord[Array[Byte], String]].map(record => record.value())
 
         kafkaSource ~> mapFromConsumerRecord ~> printlnSink ~> anoSink

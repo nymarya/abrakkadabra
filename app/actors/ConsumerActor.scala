@@ -6,7 +6,7 @@ import akka.kafka.scaladsl.{Committer, Consumer}
 import akka.stream.scaladsl.{Flow, GraphDSL, Keep, RunnableGraph, Sink, Source}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 import akka.actor.{Actor, Props}
 import akka.kafka.scaladsl.Consumer.DrainingControl
 import akka.stream.{ActorMaterializer, ClosedShape}
@@ -16,6 +16,7 @@ import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
 import org.apache.kafka.common.TopicPartition
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 object ConsumerActor{
   def props = Props[ConsumerActor]
@@ -93,8 +94,8 @@ class ConsumerActor extends Actor{
         .runWith(Sink.ignore)
 
 //      println(S)
-      while(!c.isCompleted)
-        println("esperando")
+      val d : Duration = 2.seconds
+      Await.ready(c, d)
 
       sender() ! ker
     }

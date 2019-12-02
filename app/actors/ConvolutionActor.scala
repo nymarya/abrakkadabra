@@ -31,80 +31,40 @@ class ConvolutionActor extends Actor {
 
   def receive = {
     case matrices: Matrices =>
-//      val image: DenseVector[Int] = DenseVector( 8, 5, 8, 1, 6, 8, 7, 9, 9, 2, 8, 2, 7, 8,
-//        2, 9, 4, 9, 7, 3, 2, 9, 2, 9, 7, 1, 9, 5, 6, 9, 8, 7, 3, 1, 5,
-//        3, 5, 6, 4, 1, 4, 7)
-//      val kernel : DenseVector[Int] = DenseVector(3, 2, 2, 1, 1, 3, 3, 1, 2)
 
-
-//      val image: DenseMatrix[Int] = DenseMatrix( Array(8, 5, 8, 1, 6, 8, 7), Array(9, 9, 2, 8, 2, 7, 8),
-//        Array(2, 9, 4, 9, 7, 3, 2), Array( 9, 2, 9, 7, 1, 9, 5), Array(6, 9, 8, 7, 3, 1, 5),
-//        Array(1, 9, 9, 7, 1, 4, 6), Array(3, 5, 6, 4, 1, 4, 7))
-//      val kernel : DenseMatrix[Int] = DenseMatrix(Array(3, 2, 2), Array(1, 1, 3), Array(3, 1, 2))
-//
-//      val m : Int = image.rows + kernel.rows - 1
-//
-////      val imageaa = sc.parallelize(image.toArray)
+//      val image: DenseMatrix[Int] = DenseMatrix( matrices.matrix : _)
+//      val kernel : DenseMatrix[Int] = DenseMatrix(matrices.kernel : _)
+//      val m : Int = image.rows + kernel.rows - 1;
 //
 //      val imageCopy: DenseMatrix[Int] = DenseMatrix.zeros(m, m)
 //      val kernelCopy: DenseMatrix[Int] = DenseMatrix.zeros(m, m)
 //
 //      // Fill
-//      for( i <- 0 until image.rows; j <- 0 until image.rows){
+//      for( i <- 0 until image.rows; j <- 0 until image.cols){
 //        imageCopy(i, j) = image.apply(i, j)
 //      }
 //
-//      for( i <- 0 until kernel.rows; j <- 0 until kernel.rows){
+//      for( i <- 0 until kernel.rows; j <- 0 until kernel.cols){
 //        kernelCopy(i, j) = kernel.apply(i, j)
 //      }
 //
-////      val sum = sc.doubleAccumulator("acc")
-//      val result : DenseMatrix[Double] = DenseMatrix.zeros(m, m)
-//      val rangeJ = 0 until m
-//      val result = sc.parallelize(0 until m).map(
-//        j => {
-//        for( k <- 0 until m) {
-//            var sum = 0
-//            for( p <- 0 to j) {
-//
-//                for(q <- 0 to k){
-//                  val ker = kernelCopy.apply(p, q)
-//                  val im = imageCopy.apply(j - p, k - q)
-//                  sum += (ker * im)
-//                }
-//              }
-//
-//             sum
-//          }
-//        }).collect()
-
-
-//      val image_height = image.rows
-//      val image_width = image.cols
-//      val local_filter_height = kernel.rows
-//      val local_filter_width = kernel.cols
-//      val padded = BDM.zeros[Double](image_height + 2 * (filter_height/2),
-//        image_width + 2* (filter_width/2))
-//      for (i <- 0 until image_height) {
-//        for (j <- 0 until image_width) {
-//          padded(i + (filter_height / 2), j + (filter_height / 2)) = image(i, j)
-//        }
-//      }
-//      val convolved = BDM.zeros[Double](image_height -local_filter_height + 1 + 2 *
-//        (filter_height/2), image_width - local_filter_width + 1 + 2 * (filter_width/2))
-//      for (i <- 0 until convolved.rows) {
-//        for (j <- 0 until convolved.cols) {
-//          var aggregate = 0.0
-//          for (k <- 0 until local_filter_height) {
-//            for (l <- 0 until local_filter_width) {
-//              aggregate += padded(i + k, j + l) * filter(k, l)
+//      val result : DenseMatrix[Int] = DenseMatrix.zeros(m, m)
+//      for (j <- 0 until m){
+//        for (k <- 0 until m){
+//          var sum: Int = 0;
+//          for (p <-0 to j){
+//            for (q <- 0 to k ){
+//              val k = kernelCopy.apply(p, q)
+//              println(j - p )
+//              val i = imageCopy.apply(j - p, k - q)
+//              sum = sum + k * i
 //            }
 //          }
-//          convolved(i, j) = aggregate
+//          result(j, k) = sum
 //        }
 //      }
-//
-//      val result = convolve(image, kernel)
+
+      val result = convolve(image, kernel)
     val entries: RDD[MatrixEntry] =  sc.parallelize(matrices.kernel.zipWithIndex.map{ case (v, i) =>
                                                           v.zipWithIndex.map{ case (x, j) =>  MatrixEntry(i, j , x)}}
       .flatMap(_.toSeq))

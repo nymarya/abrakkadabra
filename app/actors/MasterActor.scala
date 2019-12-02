@@ -39,7 +39,7 @@ class MasterActor extends Actor {
       cassandraActor ! strings
 
     }
-    case m: Matrices => println("received message from cassandra")
+    case m: Matrices => sparkActor ! m
     case bosta: Any => println("bosta"); println(bosta)
   }
 

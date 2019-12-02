@@ -1,8 +1,8 @@
 package actors
 
 import akka.Done
-import akka.kafka.{ConsumerSettings, Subscriptions}
-import akka.kafka.scaladsl.Consumer
+import akka.kafka.{CommitterSettings, ConsumerSettings, Subscriptions}
+import akka.kafka.scaladsl.{Committer, Consumer}
 import akka.stream.scaladsl.{Keep, Sink}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 
@@ -12,7 +12,7 @@ import akka.kafka.scaladsl.Consumer.DrainingControl
 import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import messages.Kernel
-import org.apache.kafka.clients.consumer.{ ConsumerConfig}
+import org.apache.kafka.clients.consumer.ConsumerConfig
 
 import scala.collection.immutable
 
@@ -29,6 +29,7 @@ class ConsumerActor extends Actor{
       .withGroupId("console-consumer-77977")
       .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
       .withProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true")
+      .withProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "5000")
   val kafkaConsumer = consumerSettings.createKafkaConsumer()
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
@@ -45,11 +46,24 @@ class ConsumerActor extends Actor{
     case topic:  String => {
       println("cons")
       println(topic)
-      val control: DrainingControl[immutable.Seq[Done]] =
+//      val control: DrainingControl[immutable.Seq[Done]] =
+//        Consumer
+//          .at(consumerSettings, Subscriptions.topics(topic))
+//          .mapAsync(1)(record => business(record.value()))
+//          .toMat(Sink.seq)(Keep.both)
+//          .mapMaterializedValue(DrainingControl.apply)
+//          .run()
+
+      val committerSettings = CommitterSettings(context.system)
+
+      val control: DrainingControl[Done] =
         Consumer
-          .atMostOnceSource(consumerSettings, Subscriptions.topics(topic))
-          .mapAsync(1)(record => business(record.value()))
-          .toMat(Sink.seq)(Keep.both)
+          .committableSource(consumerSettings, Subscriptions.topics(topic))
+          .mapAsync(1) { msg =>
+            business( msg.record.value)
+              .map(_ => msg.committableOffset)
+          }
+          .toMat(Committer.sink(committerSettings))(Keep.both)
           .mapMaterializedValue(DrainingControl.apply)
           .run()
 

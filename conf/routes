@@ -17,7 +17,7 @@ GET     /hello/:name                controllers.HomeController.sayHello(name )
 #GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 # Spark test
-GET	/spark		      controllers.HomeController.sparkHello
+#GET	/spark		      controllers.HomeController.sparkHello
 
 GET /principal        controllers.HomeController.principal
 POST /principal        controllers.HomeController.receive

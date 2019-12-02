@@ -88,9 +88,9 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
   }
 
 //  val sparkActor = system.actorOf(ConvolutionActor.props, "spark-actor")
-  def sparkHello() =  {
-
-    Ok("a")
-  }
+//  def sparkHello() =  {
+//
+//    Ok("a")
+//  }
 
 }

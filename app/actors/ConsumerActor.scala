@@ -27,7 +27,7 @@ class ConsumerActor extends Actor{
   val consumerSettings =
     ConsumerSettings(config, new StringDeserializer, new ByteArrayDeserializer)
       .withBootstrapServers("10.128.0.2:9092")
-      .withClientId("consumerAkka")
+//      .withClientId("consumerAkka")
       .withGroupId("console-consumer-1")
       .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
       .withProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false")

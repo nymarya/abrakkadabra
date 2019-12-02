@@ -49,6 +49,7 @@ class ConsumerActor extends Actor{
     (message) => {
       val k = (message.map(_.toChar)).mkString
       println(k)
+      sender() ! Kernel(k)
       Future.successful(message.capitalize)}
 
 

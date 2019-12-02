@@ -43,7 +43,7 @@ class MasterActor extends Actor {
     }
     case m: Matrices => sparkActor ! m
     case b: BlockMatrix => {
-      val aaa = b.toCoordinateMatrix().entries.map{ case MatrixEntry(row: Long, col:Long, sim:Double) => Array(row, col, sim).mkString(",")}.collect()
+      val aaa = b.toLocalMatrix
       println(aaa)
       sender().forward(aaa.toString())
     }

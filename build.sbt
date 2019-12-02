@@ -32,6 +32,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-slf4j"  % akkaVersion,
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream-kafka" % "1.1.0",
+  "com.lightbend.akka" %% "akka-stream-alpakka-cassandra" % "1.1.2",
 
   "org.scalanlp" %% "breeze" % "0.12"
 )

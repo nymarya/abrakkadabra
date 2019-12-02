@@ -37,8 +37,8 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze" % "0.12"
 )
 
-//libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "3.6.0"
-//libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-mapping" % "3.6.0"
+libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "3.6.0"
+libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-mapping" % "3.6.0"
 libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.4"
 //// https://mvnrepository.com/artifact/org.apache.spark/spark-mllib
 //libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.4"

@@ -26,7 +26,7 @@ class MasterActor extends Actor {
       kafkaActor ! kernelData
     }
     case Producted => {
-      val top :String = "topico-relacionado"
+      val top :String = "topico-replicado"
 
       kafkaActor2 ! top
     }
@@ -43,8 +43,9 @@ class MasterActor extends Actor {
     }
     case m: Matrices => sparkActor ! m
     case b: BlockMatrix => {
-      b.toCoordinateMatrix().entries.foreach( a => println(a.value))
-      sender().forward(b.toCoordinateMatrix().entries.toJavaRDD().toString())
+      val aaa = b.toCoordinateMatrix().entries.map( a => a.value)
+      println(aaa)
+      sender().forward(aaa.toString())
     }
     case x: Any => println("Tipo inesperado"); println(x)
   }

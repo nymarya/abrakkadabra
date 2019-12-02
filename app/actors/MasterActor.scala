@@ -4,6 +4,7 @@ import actors.HelloActor.SayHello
 import akka.actor.{Actor, ActorRef, Props}
 import messages.{Kernel, KernelData, Matrices, Matrix, Producted}
 import org.apache.spark.SparkContext
+import org.apache.spark.mllib.linalg.distributed.BlockMatrix
 
 object MasterActor {
   def props = Props[MasterActor]
@@ -40,7 +41,8 @@ class MasterActor extends Actor {
 
     }
     case m: Matrices => sparkActor ! m
-    case bosta: Any => println("bosta"); println(bosta)
+    case b: BlockMatrix => println(b.toCoordinateMatrix().entries.toJavaRDD().toString()); sender().forward(b.toCoordinateMatrix().entries.toJavaRDD().toString())
+    case x: Any => println("Tipo inesperado"); println(x)
   }
 
 }

@@ -31,7 +31,7 @@ class MasterActor extends Actor {
     case k: Kernel => {
       val matrix = k.value
       val strings: Array[Array[Int]] = matrix.slice(2, matrix.length-1).split(']')
-        .map(a => a.slice(1, a.length- 1).split(',').map(b => b.toInt).toArray ).toArray
+        .map(a => a.slice(1, a.length- 1).split(',').map(b => b.replaceAllLiterally(" ", "").toInt).toArray ).toArray
       println(strings.toString())
 
       cassandraActor ! strings

@@ -43,14 +43,16 @@ class ConsumerActor extends Actor{
     sender() ! Kernel(k)
     Future.successful(Done)
   }
-
+  var ker: Kernel = Kernel("")
   type Service[A, B] = A => Future[B]
   val handleMessage: Service[String, String] =
     (message) => {
       val k = (message.map(_.toChar)).mkString
       println(k)
-      sender() ! Kernel(k)
-      Future.successful(message.capitalize)}
+      ker  = Kernel(k)
+
+      Future.successful(message.capitalize)
+    }
 
 
   def receive = {
@@ -91,7 +93,7 @@ class ConsumerActor extends Actor{
         .runWith(Sink.ignore)
 
 //      println(S)
-
+        sender() ! ker
     }
     case x: Any => println(x)
   }

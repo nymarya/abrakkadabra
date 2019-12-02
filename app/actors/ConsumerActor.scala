@@ -59,9 +59,9 @@ class ConsumerActor extends Actor{
 
       val S = Consumer.plainSource(consumerSettings, Subscriptions.topics(topic)).mapAsync( 1){
         msg => business( msg.value)
-      }.toMat(Sink.seq)(Keep.both)
-        .mapMaterializedValue(DrainingControl.apply)
-        .run()
+      }
+
+      println(S)
 
     }
     case x: Any => println(x)

@@ -18,7 +18,7 @@ object DatabaseActor{
 class DatabaseActor extends Actor{
 
   implicit val session = Cluster.builder
-    .addContactPoint("127.0.0.1")
+    .addContactPoint("10.128.0.4")
     .withPort(9042)
     .build
     .connect()

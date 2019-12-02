@@ -4,7 +4,8 @@ import akka.actor.{Actor, Props}
 import akka.stream.ActorMaterializer
 import akka.stream.alpakka.cassandra.scaladsl.CassandraSource
 import akka.stream.scaladsl.Sink
-import com.datastax.driver.core.{Cluster, SimpleStatement}
+import com.datastax.oss.driver.api.core.CqlSession
+import com.datastax.oss.driver.api.core.cql.SimpleStatement
 import messages.Matrices
 
 import scala.concurrent.{Await, TimeoutException}
@@ -17,11 +18,9 @@ object DatabaseActor{
 
 class DatabaseActor extends Actor{
 
-  implicit val session = Cluster.builder
-    .addContactPoint("10.128.0.4")
-    .withPort(9042)
-    .build
-    .connect()
+  implicit val session: CqlSession = CqlSession.builder
+    .addContactPoint("10.128.0.4:9042")
+    .build()
 
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 

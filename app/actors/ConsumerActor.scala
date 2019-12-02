@@ -44,6 +44,12 @@ class ConsumerActor extends Actor{
     Future.successful(Done)
   }
 
+  type Service[A, B] = A => Future[B]
+  val handleMessage: Service[String, String] =
+    (message) => {
+      println(message)
+      Future.successful(message.capitalize)}
+
 
   def receive = {
     case topic:  String => {
@@ -59,20 +65,28 @@ class ConsumerActor extends Actor{
       val kafkaTopic = "topico-replicado"
       val partition = 0
       val subscription = Subscriptions.assignment(new TopicPartition(kafkaTopic, partition))
-      val runnableGraph = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder =>
-        import akka.stream.scaladsl.GraphDSL.Implicits._
-
-        val kafkaSource = Consumer.plainSource(consumerSettings, subscription)
-        val printlnSink = Sink.foreach(println)
-        val anoSink = Sink.foreach((a : Source[String, String]) => {println(a.toString())})
-        val mapFromConsumerRecord = Flow[ConsumerRecord[Array[Byte], String]].map(record => record.value())
-
-        kafkaSource ~> mapFromConsumerRecord ~> printlnSink ~> anoSink
-
-        ClosedShape
-      })
-
-      runnableGraph.run()
+//      val runnableGraph = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder =>
+//        import akka.stream.scaladsl.GraphDSL.Implicits._
+//
+//        val kafkaSource = Consumer.plainSource(consumerSettings, subscription)
+//        val printlnSink = Sink.foreach(println)
+//        val anoSink = Sink.foreach((a : Source[String, String]) => {println(a.toString())})
+//        val mapFromConsumerRecord = Flow[ConsumerRecord[Array[Byte], String]].map(record => record.value())
+//
+//        kafkaSource ~> mapFromConsumerRecord ~> printlnSink ~> anoSink
+//
+//        ClosedShape
+//      })
+//
+//      runnableGraph.run()
+      Consumer
+        .committableSource(consumerSettings, Subscriptions.topics("topico-replicado"))
+        .mapAsync(1) { msg =>
+          handleMessage(msg.record.value.toString())
+            .flatMap(response => msg.committableOffset.commitScaladsl())
+            .recoverWith { case e => msg.committableOffset.commitScaladsl() }
+        }
+        .runWith(Sink.ignore)
 
 //      println(S)
 

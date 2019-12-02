@@ -22,7 +22,7 @@ object ConvolutionActor {
 
 class ConvolutionActor extends Actor {
 
-  val sc = new SparkContext("spark://10.128.0.7:7077", "abrakkadabra")
+  val sc = new SparkContext("spark://34.69.245.207:7077", "abrakkadabra")
 
   def func(x: Int, ac: DoubleAccumulator) = {
       ac.add(x)

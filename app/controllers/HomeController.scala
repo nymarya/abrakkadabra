@@ -87,12 +87,10 @@ class HomeController @Inject()(cc: ControllerComponents, system: ActorSystem) (i
     )
   }
 
-  val sparkActor = system.actorOf(ConvolutionActor.props, "spark-actor")
-  def sparkHello() = Action.async {
+//  val sparkActor = system.actorOf(ConvolutionActor.props, "spark-actor")
+  def sparkHello() =  {
 
-    (sparkActor ? "aa").mapTo[String].map { message =>
-      Ok(message)
-    }
+    Ok("a")
   }
 
 }

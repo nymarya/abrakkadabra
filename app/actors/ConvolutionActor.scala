@@ -21,7 +21,8 @@ object ConvolutionActor {
 }
 
 class ConvolutionActor extends Actor {
-  val conf = new SparkConf().setAppName("abrakkadabra").setMaster("spark://34.69.245.207:7077").set("spark.driver.allowMultipleContexts", "true")
+  val conf = new SparkConf().setAppName("abrakkadabra").setMaster("spark://34.69.245.207:7077")
+    .set("spark.driver.allowMultipleContexts", "true")
 
   val sc = new SparkContext(conf)
   def func(x: Int, ac: DoubleAccumulator) = {

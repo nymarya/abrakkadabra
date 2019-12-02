@@ -21,11 +21,16 @@ class MasterActor extends Actor {
   def receive = {
     case kernelData: KernelData => {
       println(kernelData.kernel)
-      kafkaActor.tell(kernelData, sender())
+      kafkaActor ! kernelData
 //      kafkaActor.tell(kernelData.kernel, sender())
     }
-    case Producted => kafkaActor2.tell("topico-relacionado", sender())
+    case Producted => {
+      val top :String = "topico-relacionado"
+
+      kafkaActor2 ! top
+    }
     case Kernel => println("recebeu resposta do consumidor")
+    case bosta: Any => println("bosta"); println(bosta)
   }
 
 }

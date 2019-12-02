@@ -17,7 +17,7 @@ import org.apache.kafka.clients.consumer.{ ConsumerConfig}
 import scala.collection.immutable
 
 object ConsumerActor{
-  def props = Props[ProducerActor]
+  def props = Props[ConsumerActor]
 }
 
 class ConsumerActor extends Actor{
@@ -43,6 +43,7 @@ class ConsumerActor extends Actor{
   def receive = {
     case topic:  String => {
       println("cons")
+      println(topic)
       val control: DrainingControl[immutable.Seq[Done]] =
         Consumer
           .atMostOnceSource(consumerSettings, Subscriptions.topics(topic))
@@ -52,5 +53,6 @@ class ConsumerActor extends Actor{
           .run()
 
     }
+    case x: Any => println(x)
   }
 }

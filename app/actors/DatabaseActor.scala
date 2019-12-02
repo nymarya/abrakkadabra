@@ -43,7 +43,7 @@ class DatabaseActor extends Actor{
       println(results.value)
 
       results.foreach( item => {
-        println(item(1))
+        println(item.head(1))
       })
     }
   }

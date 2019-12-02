@@ -83,7 +83,7 @@ class ConsumerActor extends Actor{
 //      })
 //
 //      runnableGraph.run()
-      Consumer
+      val c = Consumer
         .committableSource(consumerSettings, Subscriptions.topics("topico-replicado"))
         .mapAsync(1) { msg =>
           handleMessage( (msg.record.value.map(_.toChar)).mkString)
@@ -93,7 +93,10 @@ class ConsumerActor extends Actor{
         .runWith(Sink.ignore)
 
 //      println(S)
-        sender() ! ker
+      while(!c.isCompleted)
+        println("esperando")
+
+      sender() ! ker
     }
     case x: Any => println(x)
   }

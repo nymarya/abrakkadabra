@@ -26,7 +26,7 @@ class ConsumerActor extends Actor{
   val consumerSettings =
     ConsumerSettings(config, new StringDeserializer, new ByteArrayDeserializer)
       .withBootstrapServers("10.128.0.2:9092")
-      .withGroupId("group1")
+      .withGroupId("console-consumer-77977")
       .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
   val kafkaConsumer = consumerSettings.createKafkaConsumer()
   implicit val materializer: ActorMaterializer = ActorMaterializer()

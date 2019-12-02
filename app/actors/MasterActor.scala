@@ -29,7 +29,7 @@ class MasterActor extends Actor {
 
       kafkaActor2 ! top
     }
-    case Kernel => println("recebeu resposta do consumidor")
+    case k: Kernel => println("recebeu resposta do consumidor")
     case bosta: Any => println("bosta"); println(bosta)
   }
 

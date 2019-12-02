@@ -47,7 +47,8 @@ class ConsumerActor extends Actor{
   type Service[A, B] = A => Future[B]
   val handleMessage: Service[String, String] =
     (message) => {
-      println(message)
+      val k = (message.map(_.toChar)).mkString
+      println(k)
       Future.successful(message.capitalize)}
 
 
